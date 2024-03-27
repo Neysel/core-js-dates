@@ -17,8 +17,9 @@
  * '01 Jan 1970 00:00:00 UTC' => 0
  * '04 Dec 1995 00:12:00 UTC' => 818035920000
  */
-function dateToTimestamp(/* date */) {
-  throw new Error('Not implemented');
+function dateToTimestamp(date) {
+  const Ddate = new Date(date);
+  return Ddate.valueOf();
 }
 
 /**
@@ -31,8 +32,14 @@ function dateToTimestamp(/* date */) {
  * Date(2023, 5, 1, 8, 20, 55) => '08:20:55'
  * Date(2015, 10, 20, 23, 15, 1) => '23:15:01'
  */
-function getTime(/* date */) {
-  throw new Error('Not implemented');
+function getTime(date) {
+  const OurDate = new Date(date);
+
+  const hh = OurDate.getHours().toString().padStart(2, '0');
+  const mm = OurDate.getMinutes().toString().padStart(2, '0');
+  const ss = OurDate.getSeconds().toString().padStart(2, '0');
+
+  return `${hh}:${mm}:${ss}`;
 }
 
 /**
@@ -46,8 +53,37 @@ function getTime(/* date */) {
  * '03 Dec 1995 00:12:00 UTC' => 'Sunday'
  * '2024-01-30T00:00:00.000Z' => 'Tuesday'
  */
-function getDayName(/* date */) {
-  throw new Error('Not implemented');
+function getDayName(date) {
+  const OurDate = new Date(date);
+  const day = OurDate.getUTCDay();
+  let result;
+  switch (day) {
+    case 0:
+      result = 'Sunday';
+      break;
+    case 1:
+      result = 'Monday';
+      break;
+    case 2:
+      result = 'Tuesday';
+      break;
+    case 3:
+      result = 'Wednesday';
+      break;
+    case 4:
+      result = 'Thursday';
+      break;
+    case 5:
+      result = 'Friday';
+      break;
+    case 6:
+      result = 'Saturday';
+      break;
+    default:
+      result = '';
+      break;
+  }
+  return result;
 }
 
 /**
@@ -61,8 +97,38 @@ function getDayName(/* date */) {
  * Date('2024-02-13T00:00:00Z') => Date('2024-02-16T00:00:00Z')
  * Date('2024-02-16T00:00:00Z') => Date('2024-02-23T00:00:00Z')
  */
-function getNextFriday(/* date */) {
-  throw new Error('Not implemented');
+function getNextFriday(date) {
+  const OurDate = new Date(date);
+  const day = OurDate.getUTCDay();
+  let nextDate;
+  switch (day) {
+    case 0:
+      nextDate = 5;
+      break;
+    case 1:
+      nextDate = 4;
+      break;
+    case 2:
+      nextDate = 3;
+      break;
+    case 3:
+      nextDate = 2;
+      break;
+    case 4:
+      nextDate = 1;
+      break;
+    case 5:
+      nextDate = 7;
+      break;
+    case 6:
+      nextDate = 6;
+      break;
+    default:
+      nextDate = '';
+      break;
+  }
+  OurDate.setDate(OurDate.getDate() + nextDate);
+  return OurDate;
 }
 
 /**
@@ -76,8 +142,8 @@ function getNextFriday(/* date */) {
  * 1, 2024 => 31
  * 2, 2024 => 29
  */
-function getCountDaysInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountDaysInMonth(month, year) {
+  return new Date(year, month, 0).getDate();
 }
 
 /**
@@ -91,8 +157,13 @@ function getCountDaysInMonth(/* month, year */) {
  * '2024-02-01T00:00:00.000Z', '2024-02-02T00:00:00.000Z'  => 2
  * '2024-02-01T00:00:00.000Z', '2024-02-12T00:00:00.000Z'  => 12
  */
-function getCountDaysOnPeriod(/* dateStart, dateEnd */) {
-  throw new Error('Not implemented');
+function getCountDaysOnPeriod(dateStart, dateEnd) {
+  const date1 = new Date(dateStart);
+  const date2 = new Date(dateEnd);
+  const diffTime = Math.abs(date2 - date1);
+  const result = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+  return result;
 }
 
 /**
@@ -112,8 +183,17 @@ function getCountDaysOnPeriod(/* dateStart, dateEnd */) {
  * '2024-02-02', { start: '2024-02-02', end: '2024-03-02' } => true
  * '2024-02-10', { start: '2024-02-02', end: '2024-03-02' } => true
  */
-function isDateInPeriod(/* date, period */) {
-  throw new Error('Not implemented');
+function isDateInPeriod(date, period) {
+  const dateToCompare = new Date(date);
+  const date1 = new Date(period.start);
+  const date2 = new Date(period.end);
+
+  let result = false;
+
+  if (dateToCompare <= date2 && dateToCompare >= date1) {
+    result = true;
+  }
+  return result;
 }
 
 /**
@@ -127,8 +207,32 @@ function isDateInPeriod(/* date, period */) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
+function formatDate(date) {
+  const OurDate = new Date(date);
+
+  const M = OurDate.getMonth() + 1;
+  const D = OurDate.getUTCDate();
+  const Y = OurDate.getFullYear();
+
+  const hhTwentyFour = OurDate.getUTCHours();
+  let hh;
+  const mm = OurDate.getUTCMinutes().toString().padStart(2, '0');
+  const ss = OurDate.getUTCSeconds().toString().padStart(2, '0');
+
+  let a;
+  if (hhTwentyFour < 12) {
+    hh = hhTwentyFour;
+    a = 'AM';
+  } else if (hhTwentyFour === 12) {
+    a = 'PM';
+    hh = hhTwentyFour;
+  } else {
+    a = 'PM';
+    hh = hhTwentyFour - 12;
+  }
+
+  const result = `${M}/${D}/${Y}, ${hh}:${mm}:${ss} ${a}`;
+  return result;
 }
 
 /**
